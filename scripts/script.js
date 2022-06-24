@@ -12,6 +12,7 @@ let messageTo = 'Todos';
 let messageType = 'message';
 
 
+
 function testUsername(){
     let user =  {
                     name: userName
@@ -23,15 +24,22 @@ function testUsername(){
 }
 
 function sendMessages(){
-    let messageText = document.querySelector('input').value;
+    let messageText = document.querySelector('input');
+
+    // If input is blank
+    if (messageText.value ===''){
+        return;
+    }
+
     const promise = axios.post('https://mock-api.driven.com.br/api/v6/uol/messages',{
         from:messageFrom,
         to:messageTo,
-        text:messageText,
+        text:messageText.value,
         type:messageType
     })
     promise.then(loadMessages);
     promise.catch(reloadWindow);
+    messageText.value = '';
 }
 
 function loadMessages(){
