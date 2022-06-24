@@ -1,18 +1,32 @@
-loadMessages();
-const myInterval = setInterval(loadMessages,3000)
-let userName = prompt('Digite o seu nome de usuário:')
+
+let userName = prompt('Digite o seu nome de usuário:');
+testUsername(); 
+
 const messageboard = document.querySelector('ul');
 let lastMessage = '';
 let lastFrom='';
+//let myInterval2;
+
+function testUsername(){
+    let user =  {
+                    name: userName
+                }
+    const promise = axios.post('https://mock-api.driven.com.br/api/v6/uol/participants',user);
+
+    promise.then();
+    promise.catch(tryAgain);
+}
 
 function loadMessages(){
     const promise = axios.get('https://mock-api.driven.com.br/api/v6/uol/messages');
     promise.then(showMessages);
+    promise.catch(logError);
 }
+
 function showMessages(response){
     messageboard.innerHTML = '';
 
-    // Writes all messages
+    // Writes all messages:
     for (let i = 0; i < response.data.length; i++) {
         writeMessage(response.data[i]);
     }
@@ -30,7 +44,7 @@ function writeMessage (message){
             messageboard.innerHTML+=`
                 <li class="box ${message.type}"> 
                     <span class="timestamp">${message.time}</span>
-                    <span class="username">${message.from}</span> ${message.text}
+                    <span class="username">${message.from}</span><span>${message.text}</span>
                  </li>`
             break;
 
@@ -59,8 +73,25 @@ function scrollMessages(lastText,lastUser){
         lastMessage = lastText;
         lastFrom = lastUser;
         document.querySelectorAll('.box')[document.querySelectorAll('.box').length-1].scrollIntoView();
-        console.log('tudo');
-    } else{
-        console.log('nada');
     }
 }
+
+function logError(error) {
+    console.log("Status code: " + error.response.status);
+    console.log("Error message: " + error.response.data); 
+}
+function tryAgain(error){
+    logError(error);
+    userName = prompt('Erro! Digite novamente seu nome de usuário:');
+    testUsername();
+}
+// function isOnline(){
+//     myInterval2 = setInterval(pingServer,4000);
+// }
+
+// function pingServer(){
+//     const promise = axios.post('https://mock-api.driven.com.br/api/v6/uol/participants',{name:userName});
+// }
+
+loadMessages();
+const myInterval = setInterval(loadMessages,3000);
