@@ -124,5 +124,13 @@ function isOnline(){
     window.location.reload();
  }
 
+let input = document.querySelector('input');
+input.addEventListener("keypress", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    document.querySelector('.send').click();
+  }
+});
+
 loadMessages();
 const myInterval = setInterval(loadMessages,3000);
