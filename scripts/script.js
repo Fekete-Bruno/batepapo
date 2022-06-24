@@ -5,7 +5,12 @@ testUsername();
 const messageboard = document.querySelector('ul');
 let lastMessage = '';
 let lastFrom='';
-//let myInterval2;
+let myInterval2;
+
+let messageFrom= '';
+let messageTo = 'Todos';
+let messageType = 'message';
+
 
 function testUsername(){
     let user =  {
@@ -13,8 +18,20 @@ function testUsername(){
                 }
     const promise = axios.post('https://mock-api.driven.com.br/api/v6/uol/participants',user);
 
-    promise.then();
     promise.catch(tryAgain);
+    promise.then(isOnline);
+}
+
+function sendMessages(){
+    let messageText = document.querySelector('input').value;
+    const promise = axios.post('https://mock-api.driven.com.br/api/v6/uol/messages',{
+        from:messageFrom,
+        to:messageTo,
+        text:messageText,
+        type:messageType
+    })
+    promise.then(loadMessages);
+    promise.catch(reloadWindow);
 }
 
 function loadMessages(){
@@ -52,7 +69,7 @@ function writeMessage (message){
             messageboard.innerHTML+=`
                 <li class="box ${message.type}">
                     <span class="timestamp">${message.time}</span>
-                    <span class="username">${message.from}</span> para <span class="username">${message.to}</span> <span>${message.text}</span>
+                    <span class="username">${message.from}</span> para <span class="username">${message.to}:</span> <span>${message.text}</span>
                 </li>
             `
             break;
@@ -61,7 +78,7 @@ function writeMessage (message){
                 messageboard.innerHTML+=`
                 <li class="box ${message.type}">
                     <span class="timestamp">${message.time}</span>
-                    <span class="username">${message.from}</span> para <span class="username">${message.to}</span> <span>${message.text}</span>
+                    <span class="username">${message.from}</span> para <span class="username">${message.to}:</span> <span>${message.text}</span>
                 </li>
             `
             }
@@ -85,13 +102,19 @@ function tryAgain(error){
     userName = prompt('Erro! Digite novamente seu nome de usuário:');
     testUsername();
 }
-// function isOnline(){
-//     myInterval2 = setInterval(pingServer,4000);
-// }
+function isOnline(){
+    messageFrom = userName;
+     myInterval2 = setInterval(pingServer,5000);
+}
 
-// function pingServer(){
-//     const promise = axios.post('https://mock-api.driven.com.br/api/v6/uol/participants',{name:userName});
-// }
+ function pingServer(){
+     const promise = axios.post('https://mock-api.driven.com.br/api/v6/uol/status',{name:userName});
+     promise.catch(logError);
+ }
+
+ function reloadWindow(){
+    window.location.reload();
+ }
 
 loadMessages();
 const myInterval = setInterval(loadMessages,3000);

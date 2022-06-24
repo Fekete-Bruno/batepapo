@@ -59,7 +59,7 @@
     .messageboard li{
         margin: 5px 0px;
         font-size: 14px;
-        height: 40px;
+        min-height: 40px;
         display: flex;
         flex-direction: row;
         align-items: center;
